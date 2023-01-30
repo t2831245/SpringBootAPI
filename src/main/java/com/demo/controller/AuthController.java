@@ -8,6 +8,7 @@ import com.demo.repository.RoleRepository;
 import com.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -114,5 +116,18 @@ public class AuthController {
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
+	@GetMapping("/test")
+	public ResponseEntity getUse(@RequestParam String username){
+		Optional<User> user = userRepository.findByUsername(username);
+		return ResponseEntity.ok(user);
+	}
+
+	@GetMapping("/test2")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity getUse2(@RequestParam Long id){
+		Optional<User> user = userRepository.findById(id);
+		return ResponseEntity.ok(user);
 	}
 }
